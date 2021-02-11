@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>DATALYTIX</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/styles.css') }}">
+<style>
+#myDIV {
+  display:none;
+}
+#myDIV2 {
+  display:none;
+}
+</style>
+</head>
+<body>
+  <div style="display: flex; flex-direction: row;"> 
+    <img src="../static/datalytix/datalytix.png" alt="datalytix" width="40" height="30" style="margin-left: 0.5%;">
+    <h4 style="margin-left: 1%; color: #9A073C;">DATALYTIX</h4>
+    <a href="https://us7.list-manage.com/contact-form?u=c45b4435fa81fc45d23ed7254&form_id=6313ebab993ba9105ee068628885d91f" 
+    target="_blank" style="margin:0.2% 1% 0.2% 77%;">
+      <button class="btn btn-warning btn-sm">Contact Us!</button>
+    </a>
+  </div>
+  <ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a class="nav-link active" href="{{ url_for('home') }}">Product Profiling</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('show_search') }}">Online visibility</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="{{ url_for('show_customer_search') }}">Customer Enrichment</a>
+    </li>
+    <li>
+      <a class="nav-link" href="{{ url_for('ad_home') }}">Advertising</a>
+    </li>
+    <li>
+      <a class="nav-link" href="{{ url_for('location_home') }}">Footfall</a>
+    </li>
+</ul>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js" integrity="sha512-d9xgZrVZpmmQlfonhQUvTR7lMPtO7NkZMkA0ABN3PHCbKA5nqylQ/yWlFAyY6hYgdF1Qh6nYiuADWwKB4C2WSw==" crossorigin="anonymous"></script>
+<div class="full-container">
+    <p class="module-des">This module helps businesses understand & compare the brand/product/keyword search trends over time, across geographies, peek into similar trending topics, absorb social media mentions, discover underlying sentiments and relevant topics.</p>
+    <form action="{{ url_for('query')}}" method="POST">
+      <div class="input-area">
+        <div class="input-label">Input word 1</div>
+        <input class="textInput form-control" type="text" name="m1" required> 
+        <!-- <span onclick="myFunction()" style="border: 1px solid black;padding:2px;">&ensp;INPUT WORD 2&ensp;</span>&ensp;
+        <input id="myDIV" type="text" name="m2">&ensp; -->
+        <div class="input-label">Input word 2</div>
+        <label class="switch">
+          <input type="checkbox" id="mycheck1" onchange="myFunction()">
+          <span class="slider round"></span>
+        </label>
+        <input class="textInput form-control" id="myDIV" type="text" name="m2">
+        <div class="input-label">Input word 3</div>
+        <label class="switch">
+          <input type="checkbox" id="mycheck2" onchange="myFunction1()">
+          <span class="slider round"></span>
+        </label>
+        <input class="textInput form-control" id="myDIV2" type="text" name="m3">
+        <!-- <span onclick="myFunction1()" style="border: 1px solid black;padding:2px;">&ensp;INPUT WORD 3&ensp;</span>&ensp;
+        <input id="myDIV2" type="text" name="m3">&ensp; -->
+        <br>
+        <input type="submit" class="btn btn-primary custom-btn"  value="    SUBMIT     ">
+      </div>  
+    </form>
+    <div class="row">
+      {% if (stat == "not ok") %}
+      <p style="margin: 1%"><b>{{ msg }}</b></p>
+      {% else %}
+      <div class="col-7">
+        <div class="bar-container">
+          {% if (size == 3) %}
+            <div class="tabs-box">
+              <ul class="nav nav-pills">
+                <li class="nav-item">
+                  <a href="#one" class="nav-link active" role="tab" data-toggle="tab">{{ m1 }}</a>
+                </li>
+    
+                <li class="nav-item">
+                  <a href="#two" class="nav-link" role="tab" data-toggle="tab">{{ m2 }}</a>
+                </li>
+    
+                <li class="nav-item">
+                  <a href="#three" class="nav-link" role="tab" data-toggle="tab">{{ m3 }}</a>
+                </li>
+              </ul>
+              <div class="tab-content">
+                <div role="tabpanel" class="tab-pane active" id="one">
+                  <div class="bar-box">
+                    <div class="bar" ><canvas id="bar-chart-1" width="100" height="40"></canvas></div>
+                    <ul class="similar-trending other-details-box">
+                      <span><b> Similar trending topics</b></span>
+                    {% for item in m1_key %}
+                    <li> {{ item }} </li>
+                    {% endfor %}
+                    </ul>
+                  </div>
+                </div>
+                <div role="tabpanel" class="tab-pane fade in" id="two">
+                  <div class="bar-box">
+                    <div class="bar" ><canvas  width="100" height="40"  id="bar-chart-2"></canvas></div>
+                    <ul class="similar-trending other-details-box">
+                    <span><b> Similar trending topics</b></span>
+                    {% for item in m2_key %}
+                    <li> {{ item }} </li>
+                    {% endfor %}
+                    </ul>
+                  </div>
+                </div>
+                <div role="tabpanel" class="tab-pane fade in" id="three">
+                  <div class="bar-box">
+                    <div class="bar" ><canvas  width="100" height="40" id="bar-chart-3"></canvas></div>
+                    <ul class="similar-trending other-details-box">
+                      <span><b> Similar trending topics</b></span>
+                      {% for item in m3_key %}
+                      <li> {{ item }} </li>
+                      {% endfor %}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+         {% elif (size == 2) %}
+            {% if (m1_3m and m2_3m) %}
+             <div class="tabs-box">
+               <ul class="nav nav-pills">
+                  <li class="nav-item">
+                    <a href="#one" class="nav-link active" role="tab" data-toggle="tab">{{ m1 }}</a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="#two" class="nav-link" role="tab" data-toggle="tab">{{ m2 }}</a>
+                  </li>
+               </ul>
+               <div class="tab-content">
+                <div role="tabpanel" class="tab-pane active" id="one">
+                  <div class="bar-box">
+                    <div class="bar" ><canvas  width="100" height="40" id="bar-chart-1"></canvas></div>
+                      <ul class="similar-trending other-details-box">
+                        <span><b> Similar trending topics</b></span>
+                        {% for item in m1_key %}
+                        <li> {{ item }} </li>
+                        {% endfor %}
+                      </ul>
+                  </div>
+                </div>
+                <div role="tabpanel" class="tab-pane fade in" id="two">
+                  <div class="bar-box">
+                    <div class="bar" ><canvas  width="100" height="40" id="bar-chart-2"></canvas></div>
+                    <ul class="similar-trending other-details-box">
+                      <span><b> Similar trending topics</b></span>
+                      {% for item in m2_key %}
+                      <li> {{ item }} </li>
+                      {% endfor %}
+                      </ul>
+                  </div>
+                </div>
+               </div>
+             </div>   
+              {% endif %}
+              {% if (m1_3m and m3_3m) %}
+                <div class="tabs-box">
+                  <ul class="nav nav-pills">
+                    <li class="nav-item">
+                      <a href="#one" class="nav-link active" role="tab" data-toggle="tab">{{ m1 }}</a>
+                    </li>
+                    <li class="nav-item">
+                      <a href="#three" class="nav-link" role="tab" data-toggle="tab">{{ m3 }}</a>
+                    </li>
+                 </ul>
+                 <div class="tab-content">
+                    <div role="tabpanel" class="tab-pane active" id="one">
+                      <div class="bar-box">
+                        <div class="bar" ><canvas  width="100" height="40" id="bar-chart-1"></canvas></div>
+                        <ul class="similar-trending other-details-box">
+                          <span><b>Similar trending topics</b></span>
+                          {% for item in m1_key %}
+                          <li> {{ item }} </li>
+                          {% endfor %}
+                          </ul>
+                      </div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane fade in" id="three">
+                      <div class="bar-box">
+                        <div class="bar" ><canvas  width="100" height="40" id="bar-chart-2"></canvas></div>
+                        <ul class="similar-trending other-details-box">
+                          <span><b> Similar trending topics</b></span>
+                          {% for item in m3_key %}
+                          <li> {{ item }} </li>
+                          {% endfor %}
+                          </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>    
+              {% endif %}
+            {% elif (size == 1) %}
+            <div class="tabs-box">
+              <ul class="nav nav-pills">
+                <li class="nav-item">
+                  <a href="#one" class="nav-link active" role="tab" data-toggle="tab">{{ m1 }}</a>
+                </li>
+              </ul>
+              <div class="tab-content">
+                <div role="tabpanel" class="tab-pane active" id="one">
+                  <div class="bar-box">
+                    <div class="bar" ><canvas  width="100" height="40" id="bar-chart-1"></canvas></div>
+                      <ul class="similar-trending other-details-box">
+                      <span><b> Similar trending topics </b></span>
+                      {% for item in m1_key %}
+                      <li> {{ item }} </li>
+                      {% endfor %}
+                      </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% else %}
+          <div></div>
+          {% endif %}
+        </div>
+      </div>
+      <div class="col-5">
+        <div class="line"><canvas class="line" id="line-chart-1"></canvas></div>
+      </div>
+    </div>
+    <div>
+      {% if (size == 3) %}
+      <div class="other-details">
+        <div class="other-details-box">
+          <h5>Social Media</h5>
+          <table class="table table-borderless">
+            <thead>
+              <tr>
+                <th scope="col">Topic</th>
+                <th scope="col">Number of Mentions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th>{{ m1 }}</th>
+                <td> {{total_m1}} </td>
+              </tr>
+              <tr>
+                <th>{{ m2 }}</th>
+                <td> {{total_m2}} </td>
+              </tr>
+              <tr>
+                <th>{{ m3 }}</th>
+                <td> {{total_m3}} </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="other-details-box">
+          <h5>Sentiment Meter</h5>
+          <table class="table table-borderless">
+            <thead>
+              <tr>
+                <th scope="col">Topic</th>
+                <th scope="col">Negative</th>
+                <th scope="col">Neutral</th>
+                <th scope="col">Positive</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th>{{ m1 }}</th>
+                <td>{{ total_count_m1["Negative"] }} %</td>
+                <td>{{ total_count_m1["Neutral"] }} %</td>
+                <td>{{ total_count_m1["Positive"] }} %</td>
+              </tr>
+              <tr>
+                <th>{{ m2 }}</th>
+                <td>{{ total_count_m2["Negative"] }} %</td>
+                <td>{{ total_count_m2["Neutral"] }} %</td>
+                <td>{{ total_count_m2["Positive"] }} %</td>
+              </tr>
+              <tr>
+                <th>{{ m3 }}</th>
+                <td>{{ total_count_m3["Negative"] }} %</td>
+                <td>{{ total_count_m3["Neutral"] }} %</td>
+                <td>{{ total_count_m3["Positive"] }} %</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <section class="sample-image">
+          <div class="contact">
+              <a href="https://us7.list-manage.com/contact-form?u=c45b4435fa81fc45d23ed7254&form_id=6313ebab993ba9105ee068628885d91f" target="_blank">
+                  <button class="btn btn-warning contact-us">Contact Us! </button>
+              </a>
+              <div class="sub-text">To unlock related topic and other premium features</div>
+          </div>   
+        </section>
+      </div>
+      {% elif (size == 2) %}
+        {% if (m1_3m and m2_3m) %}
+          <div class="other-details">
+            <div class="other-details-box">
+              <h5>Social Media</h5>
+              <table class="table table-borderless">
+                <thead>
+                  <tr>
+                    <th scope="col">Topic</th>
+                    <th scope="col">Number of Mentions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th>{{ m1 }}</th>
+                    <td> {{total_m1}} </td>
+                  </tr>
+                  <tr>
+                    <th>{{ m2 }}</th>
+                    <td> {{total_m2}} </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="other-details-box">
+              <h5>Sentiment Meter</h5>
+              <table class="table table-borderless">
+                <thead>
+                  <tr>
+                    <th scope="col">Topic</th>
+                    <th scope="col">Negative</th>
+                    <th scope="col">Neutral</th>
+                    <th scope="col">Positive</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th>{{ m1 }}</th>
+                    <td>{{ total_count_m1["Negative"] }} %</td>
+                    <td>{{ total_count_m1["Neutral"] }} %</td>
+                    <td>{{ total_count_m1["Positive"] }} %</td>
+                  </tr>
+                  <tr>
+                    <th>{{ m2 }}</th>
+                    <td>{{ total_count_m2["Negative"] }} %</td>
+                    <td>{{ total_count_m2["Neutral"] }} %</td>
+                    <td>{{ total_count_m2["Positive"] }} %</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <section class="sample-image">
+              <div class="contact">
+                  <a href="https://us7.list-manage.com/contact-form?u=c45b4435fa81fc45d23ed7254&form_id=6313ebab993ba9105ee068628885d91f" target="_blank">
+                      <button class="btn btn-warning contact-us">Contact Us! </button>
+                  </a>
+                  <div class="sub-text">To unlock related topic and other premium features</div>
+              </div>   
+            </section>
+          </div>
+          {% endif %}
+          {% if (m1_3m and m3_3m) %}
+          <div class="other-details">
+            <div class="other-details-box">
+              <h5>Social Media</h5>
+              <table class="table table-borderless">
+                <thead>
+                  <tr>
+                    <th scope="col">Topic</th>
+                    <th scope="col">Number of Mentions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th>{{ m1 }}</th>
+                    <td> {{total_m1}} </td>
+                  </tr>
+                  <tr>
+                    <th>{{ m3 }}</th>
+                    <td> {{total_m3}} </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="other-details-box">
+              <h5>Sentiment Meter</h5>
+              <table class="table table-borderless">
+                <thead>
+                  <tr>
+                    <th scope="col">Topic</th>
+                    <th scope="col">Negative</th>
+                    <th scope="col">Neutral</th>
+                    <th scope="col">Positive</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th>{{ m1 }}</th>
+                    <td>{{ total_count_m1["Negative"] }} %</td>
+                    <td>{{ total_count_m1["Neutral"] }} %</td>
+                    <td>{{ total_count_m1["Positive"] }} %</td>
+                  </tr>
+                  <tr>
+                    <th>{{ m3 }}</th>
+                    <td>{{ total_count_m3["Negative"] }} %</td>
+                    <td>{{ total_count_m3["Neutral"] }} %</td>
+                    <td>{{ total_count_m3["Positive"] }} %</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <section class="sample-image">
+              <div class="contact">
+                  <a href="https://us7.list-manage.com/contact-form?u=c45b4435fa81fc45d23ed7254&form_id=6313ebab993ba9105ee068628885d91f" target="_blank">
+                      <button class="btn btn-warning contact-us">Contact Us! </button>
+                  </a>
+                  <div class="sub-text">To unlock related topic and other premium features</div>
+              </div>   
+            </section>
+          </div>
+          {% endif %}
+      {% elif (size == 1) %}
+      <div class="other-details">
+        <div class="other-details-box">
+          <h5>Social Media</h5>
+          <table class="table table-borderless">
+            <thead>
+              <tr>
+                <th scope="col">Topic</th>
+                <th scope="col">Number of Mentions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th>{{ m1 }}</th>
+                <td> {{total_m1}} </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="other-details-box">
+          <h5>Sentiment Meter</h5>
+          <table class="table table-borderless">
+            <thead>
+              <tr>
+                <th scope="col">Topic</th>
+                <th scope="col">Negative</th>
+                <th scope="col">Neutral</th>
+                <th scope="col">Positive</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th>{{ m1 }}</th>
+                <td>{{ total_count_m1["Negative"] }} %</td>
+                <td>{{ total_count_m1["Neutral"] }} %</td>
+                <td>{{ total_count_m1["Positive"] }} %</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <section class="sample-image">
+          <div class="contact">
+              <a href="https://us7.list-manage.com/contact-form?u=c45b4435fa81fc45d23ed7254&form_id=6313ebab993ba9105ee068628885d91f" target="_blank">
+                  <button class="btn btn-warning contact-us">Contact Us! </button>
+              </a>
+              <div class="sub-text">To unlock related topic and other premium features</div>
+          </div>   
+        </section>
+      </div>
+      {% else %}
+      <div></div>
+      {% endif %} 
+    </div>
+    {% endif %}
+  </div>
+   
+
+
+
+<!-- {%for i in viz: %} 
+	<img src="{{ i}}"/>
+{% endfor %}
+{{ a | safe }}<br>
+{{ b | safe }} -->
+
+    <script>
+    function myFunction() {
+    var x = document.getElementById("myDIV");
+    if (document.getElementById("mycheck1").checked) {
+        x.style.display = "inline";
+    } else {
+        x.style.display = "none"
+    }
+    }
+    function myFunction1() {
+    var x = document.getElementById("myDIV2");
+    if (document.getElementById("mycheck2").checked) {
+        x.style.display = "inline";
+    } else {
+        x.style.display = "none"
+    }
+    }
+    </script>
+    <script>
+      Chart.defaults.scale.gridLines.display = false;
+      Chart.defaults.scale.ticks.beginAtZero = true;
+
+
+        {% if (size == 3) %}
+        new Chart(document.getElementById("line-chart-1"), {
+  type: 'line',
+  data: {
+    labels: [{% for item in index_list %}
+                   "{{item}}",
+                  {% endfor %}],
+    datasets: [
+      { 
+        data: [{% for item in m1_3m %}
+                   "{{item}}",
+                  {% endfor %}],
+        label: "{{ m1 }} ",
+        borderColor: "#007FFF",
+        fill: false
+      },
+      {
+        data: [{% for item in m2_3m %}
+                   "{{item}}",
+                  {% endfor %}],
+        label: "{{ m2 }} ",
+        borderColor: "#0d47a1",
+        label: "{{ m2 }} ",
+        fill: false
+
+      },
+      {
+        data: [{% for item in m3_3m %}
+                   "{{item}}",
+                  {% endfor %}],
+        label: "{{ m3 }} ",
+        borderColor: "#59bfff",
+        fill: false
+
+      },
+
+
+    ]
+  },
+  options: {
+    legend: {
+      display: true,
+      position: 'bottom',
+    },
+    elements: {
+        point:{
+            radius: 1.0
+        }
+      },
+    title: {
+      display: true,
+      text: 'Search Trend',
+    },
+    scales:{
+      yAxes:[{
+        scaleLabel: {
+        display: true,
+        labelString: 'Search Score'
+      },
+        ticks: {
+            autoSkip: true,                             
+            maxTicksLimit: 7
+                },
+        
+      }
+      ],
+      xAxes:[{
+        ticks: {
+            autoSkip: true,                             
+            maxTicksLimit: 15
+                },
+        
+      }
+      ],
+    }
+  }
+});
+
+new Chart(document.getElementById("bar-chart-1"), {
+    type: 'horizontalBar',
+    data: {
+      labels: [{% for item in index_list_geo_1 %}
+                   "{{item}}",
+                  {% endfor %}],
+      datasets: [
+        {
+          label: "{{ m1 }}",
+          borderColor: "rgb(0, 127, 255)",
+          backgroundColor: "rgba(0, 127, 255, 0.3)",
+          borderWidth: 1.5,
+          data: [{% for item in m1_geo %}
+                   "{{item}}",
+                  {% endfor %}],
+          
+        }
+      ]
+    },
+    options: {
+      legend: { display: false },
+      title: {
+        display: true,
+        position: 'top',
+        text: "{{ m1 }} " + "- Geographic Trend"
+      },
+      scales:{
+        yAxes:[{
+          ticks: {
+              // autoSkip: true,                             
+              // maxTicksLimit: 7
+              autoSkip: false,                             
+              // maxTicksLimit: 7
+                  },
+          
+        }
+        ],
+        xAxes: [{
+                scaleLabel: {
+                display: true,
+                labelString: 'Search Score'},
+                // barPercentage: 0.6,
+                // ticks: {
+                //     autoSkip: false,
+                //     maxRotation: 90,
+                //     minRotation: 90
+                // },
+                // categoryPercentage: 0.4,
+                }]
+    }
+    }
+});
+
+new Chart(document.getElementById("bar-chart-2"), {
+    type: 'horizontalBar',
+    data: {
+      labels: [{% for item in index_list_geo_2 %}
+                   "{{item}}",
+                  {% endfor %}],
+      datasets: [
+        {
+          label: "{{ m2 }}",
+          backgroundColor: "rgba(13, 71, 161, 0.3)",
+          borderColor:"rgba(13, 71, 161, 1)",
+          borderWidth:1.5,
+          data: [{% for item in m2_geo %}
+                   "{{item}}",
+                  {% endfor %}]
+        }
+      ]
+    },
+    options: {
+      legend: { display: false },
+      title: {
+        display: true,
+        position: 'top',
+        text: "{{ m2 }} " + "- Geographic Trend"
+      },
+      scales:{
+        yAxes:[{
+        //   scaleLabel: {
+        //   display: true,
+        //   labelString: 'Search Score'
+        // },
+          ticks: {
+              autoSkip: false,                             
+              // maxTicksLimit: 7
+                  },
+          
+        }
+        ],
+        xAxes: [{
+          scaleLabel: {
+          display: true,
+          labelString: 'Search Score'
+        },
+        // barPercentage: 0.5,
+        // categoryPercentage: 1.5,
+                }]
+    }
+    }
+});
+
+new Chart(document.getElementById("bar-chart-3"), {
+    type: 'horizontalBar',
+    data: {
+      labels: [{% for item in index_list_geo_3 %}
+                   "{{item}}",
+                  {% endfor %}],
+      datasets: [
+        {
+          label: "{{ m3 }}",
+          backgroundColor: "rgba(89, 191, 255, 0.3)",
+          borderWidth:1.5,
+          borderColor:"rgba(89, 191, 255, 1)",
+          data: [{% for item in m3_geo %}
+                   "{{item}}",
+                  {% endfor %}]
+        }
+      ]
+    },
+    options: {
+      legend: { display: false },
+      title: {
+        display: true,
+        position: 'top',
+        text: "{{ m3 }} " + "- Geographic Trend"
+      },
+      scales:{
+        yAxes:[{
+          ticks: {
+              // autoSkip: true,                             
+              // maxTicksLimit: 7
+              autoSkip: false,                             
+              // maxTicksLimit: 7
+                  },
+          
+        }
+        ],
+        xAxes: [{
+                scaleLabel: {
+                display: true,
+                labelString: 'Search Score'},
+                // barPercentage: 0.6,
+                // ticks: {
+                //     autoSkip: false,
+                //     maxRotation: 90,
+                //     minRotation: 90
+                // },
+                // categoryPercentage: 0.4,
+                }]
+    }
+    }
+});
+
+
+{% endif %}
+
+{% if (size == 2) %}
+{% if (m1_3m and m2_3m) %}
+new Chart(document.getElementById("line-chart-1"), {
+  type: 'line',
+  data: {
+    labels: [{% for item in index_list %}
+                   "{{item}}",
+                  {% endfor %}],
+    datasets: [{ 
+        data: [{% for item in m1_3m %}
+                   "{{item}}",
+                  {% endfor %}],
+        borderColor: "#007FFF",
+        label: "{{ m1 }} ",
+        fill: false
+      },
+      {
+        data: [{% for item in m2_3m %}
+                   "{{item}}",
+                  {% endfor %}],
+        borderColor: "#0d47a1",
+        label: "{{ m2 }} ",
+        fill: false
+
+      }
+    ]
+  },
+  options: {
+    legend: {
+      display: true,
+      position: 'bottom',
+    },
+    title: {
+      display: true,
+      text: 'Search Trend'
+    },
+    elements: {
+        point:{
+            radius: 1.0
+        }
+      },
+    scales:{
+      yAxes:[{
+        scaleLabel: {
+        display: true,
+        labelString: 'Search Score'
+      },
+        ticks: {
+            autoSkip: true,                             
+            maxTicksLimit: 7
+                }
+      }
+      ],
+      xAxes:[{
+        ticks: {
+            autoSkip: true,                             
+            maxTicksLimit: 15
+                }
+      }
+      ],
+    }
+  }
+});
+
+new Chart(document.getElementById("bar-chart-1"), {
+    type: 'horizontalBar',
+    data: {
+      labels: [{% for item in index_list_geo_1 %}
+                   "{{item}}",
+                  {% endfor %}],
+      datasets: [
+        {
+          label: "{{ m1 }}",
+          borderColor: "rgb(0, 127, 255)",
+          backgroundColor: "rgba(0, 127, 255, 0.3)",
+          borderWidth: 1.5,
+          data: [{% for item in m1_geo %}
+                   "{{item}}",
+                  {% endfor %}]
+        }
+      ]
+    },
+    options: {
+      legend: { display: false },
+      title: {
+        display: true,
+        position: 'top',
+        text: "{{ m1 }} " + "- Geographic Trend"
+      },
+      scales:{
+        yAxes:[{
+          ticks: {
+              autoSkip: false,                             
+                  },
+          
+        }
+        ],
+        xAxes: [{
+                scaleLabel: {
+                display: true,
+                labelString: 'Search Score'},
+                }]
+    }
+    }
+});
+
+new Chart(document.getElementById("bar-chart-2"), {
+    type: 'horizontalBar',
+    data: {
+      labels: [{% for item in index_list_geo_2 %}
+                   "{{item}}",
+                  {% endfor %}],
+      datasets: [
+        {
+          label: "{{ m2 }}",
+          backgroundColor: "rgba(13, 71, 161, 0.3)",
+          borderColor:"rgba(13, 71, 161, 1)",
+          borderWidth:1.5,
+          data: [{% for item in m2_geo %}
+                   "{{item}}",
+                  {% endfor %}]
+        }
+      ]
+    },
+    options: {
+      legend: { display: false },
+      title: {
+        display: true,
+        position: 'top',
+        text: "{{ m2 }} " + "- Geographic Trend"
+      },
+      scales:{
+        yAxes:[{
+          ticks: {
+              autoSkip: false,                             
+                  },
+          
+        }
+        ],
+        xAxes: [{
+                scaleLabel: {
+                display: true,
+                labelString: 'Search Score'},
+                }]
+    }
+    }
+});
+{% endif %}
+{% endif %}
+
+{% if (size == 2) %}
+{% if (m1_3m and m3_3m) %}
+new Chart(document.getElementById("line-chart-1"), {
+  type: 'line',
+  data: {
+    labels: [{% for item in index_list %}
+                   "{{item}}",
+                  {% endfor %}],
+    datasets: [{ 
+        data: [{% for item in m1_3m %}
+                   "{{item}}",
+                  {% endfor %}],
+        borderColor: "#007FFF",
+        label: "{{ m1 }} ",
+        fill: false
+      },
+      {
+        data: [{% for item in m3_3m %}
+                   "{{item}}",
+                  {% endfor %}],
+        borderColor: "#0d47a1",
+        label: "{{ m3 }} ",
+        fill: false
+
+      }
+    ]
+  },
+  options: {
+    legend: {
+      display: true,
+      position: 'bottom',
+    },
+    elements: {
+        point:{
+            radius: 1.0
+        }
+      },
+    title: {
+      display: true,
+      text: 'Search Trend'
+    },
+    scales:{
+      yAxes:[{
+        scaleLabel: {
+        display: true,
+        labelString: 'Search Score'
+      },
+        ticks: {
+            autoSkip: true,                             
+            maxTicksLimit: 7
+                }
+      }
+      ],
+      xAxes:[{
+        ticks: {
+            autoSkip: true,                             
+            maxTicksLimit: 15
+                }
+      }
+      ],
+    }
+  }
+});
+
+new Chart(document.getElementById("bar-chart-1"), {
+    type: 'horizontalBar',
+    data: {
+      labels: [{% for item in index_list_geo_1 %}
+                   "{{item}}",
+                  {% endfor %}],
+      datasets: [
+        {
+          label: "{{ m1 }}",
+          borderColor: "rgb(0, 127, 255)",
+          backgroundColor: "rgba(0, 127, 255, 0.3)",
+          borderWidth: 1.5,
+          data: [{% for item in m1_geo %}
+                   "{{item}}",
+                  {% endfor %}]
+        }
+      ]
+    },
+    options: {
+      legend: { display: false },
+      title: {
+        display: true,
+        position: 'top',
+        text: "{{ m1 }} " + "- Geographic Trend"
+      },
+      scales:{
+        yAxes:[{
+          ticks: {
+              autoSkip: false,                             
+                  },
+          
+        }
+        ],
+        xAxes: [{
+                scaleLabel: {
+                display: true,
+                labelString: 'Search Score'},
+                }]
+    }
+    }
+});
+
+new Chart(document.getElementById("bar-chart-2"), {
+    type: 'horizontalBar',
+    data: {
+      labels: [{% for item in index_list_geo_3 %}
+                   "{{item}}",
+                  {% endfor %}],
+      datasets: [
+        {
+          label: "{{ m3 }}",
+          backgroundColor: "rgba(13, 71, 161, 0.3)",
+          borderColor:"rgba(13, 71, 161, 1)",
+          borderWidth:1.5,
+          data: [{% for item in m3_geo %}
+                   "{{item}}",
+                  {% endfor %}]
+        }
+      ]
+    },
+    options: {
+      legend: { display: false },
+      title: {
+        display: true,
+        position: 'top',
+        text: "{{ m3 }} " + "- Geographic Trend"
+      },
+      scales:{
+        yAxes:[{
+          ticks: {
+              autoSkip: false,                             
+                  },
+          
+        }
+        ],
+        xAxes: [{
+                scaleLabel: {
+                display: true,
+                labelString: 'Search Score'},
+                }]
+    }
+    }
+});
+
+{% endif %}
+{% endif %}
+
+{% if (size == 1) %}
+new Chart(document.getElementById("line-chart-1"), {
+  type: 'line',
+  data: {
+    labels: [{% for item in index_list %}
+                   "{{item}}",
+                  {% endfor %}],
+    datasets: [{ 
+        data: [{% for item in m1_3m %}
+                   "{{item}}",
+                  {% endfor %}],
+        borderColor: "#007FFF",
+        label: "{{ m1 }} ",
+        fill: false
+      }
+    ]
+  },
+  options: {
+    legend: {
+      display: true,
+      position: 'bottom',
+    },
+    elements: {
+        point:{
+            radius: 1.0
+        }
+      },
+    title: {
+      display: true,
+      text: 'Search Trend'
+    },
+    scales:{
+      yAxes:[{
+        scaleLabel: {
+        display: true,
+        labelString: 'Search Score'
+      },
+        ticks: {
+            autoSkip: true,                             
+            maxTicksLimit: 7
+                }
+      }
+      ],
+      xAxes:[{
+        ticks: {
+            autoSkip: true,                             
+            maxTicksLimit: 15
+                }
+      }
+      ],
+      
+    }
+  }
+});
+
+new Chart(document.getElementById("bar-chart-1"), {
+    type: 'horizontalBar',
+    data: {
+      labels: [{% for item in index_list_geo_1 %}
+                   "{{item}}",
+                  {% endfor %}],
+      datasets: [
+        {
+          label: "{{ m1 }}",
+          borderColor: "rgb(0, 127, 255)",
+          backgroundColor: "rgba(0, 127, 255, 0.3)",
+          borderWidth: 1.5,
+          data: [{% for item in m1_geo %}
+                   "{{item}}",
+                  {% endfor %}]
+        }
+      ]
+    },
+    options: {
+      legend: { display: false },
+      title: {
+        display: true,
+        position: 'top',
+        text: "{{ m1 }} " + "- Geographic Trend"
+      },
+      scales:{
+        yAxes:[{
+          ticks: {
+              autoSkip: false,                             
+                  },
+          
+        }
+        ],
+        xAxes: [{
+                scaleLabel: {
+                display: true,
+                labelString: 'Search Score'},
+                }]
+    }
+
+    }
+});
+
+{% endif %}
+
+
+    </script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+</body>
+</html>

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advertising</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/advertising.css') }}">
+</head>
+<body>
+  <div style="display: flex; flex-direction: row;"> 
+    <img src="../static/datalytix/datalytix.png" alt="datalytix" width="40" height="30" style="margin-left: 0.5%;">
+    <h4 style="margin-left: 1%; color: #9A073C;">DATALYTIX</h4>
+    <!-- <a href="https://us7.list-manage.com/contact-form?u=c45b4435fa81fc45d23ed7254&form_id=6313ebab993ba9105ee068628885d91f" 
+    target="_blank" style="margin:0.2% 1% 0.2% 77%;">
+      <button class="btn btn-warning btn-sm">Contact Us!</button>
+    </a> -->
+    <div style="margin:0.2% 1% 0.2% 77%;">
+      <button class="btn btn-warning btn-sm" data-toggle="modal" data-target="#exampleModal">Contact Us!</button>
+  </div>
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Contact Us</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <iframe src="https://us7.list-manage.com/contact-form?u=c45b4435fa81fc45d23ed7254&form_id=6313ebab993ba9105ee068628885d91f" style="width: 100%; min-height: 40rem; border: none;"></iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('show_search') }}">Online visibility</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('show_customer_search') }}">Hyperlocal Intelligence</a>
+    </li>
+    <li>
+      <a class="nav-link active" href="{{ url_for('ad_home') }}">OOH Advertising</a>
+    </li>
+    <li>
+      <a class="nav-link" href="{{ url_for('location_home') }}">Footfall & Visits</a>
+    </li>
+  </ul>
+  <div class="full-container">
+    <p class="module-des">This module provides details about the physical locations of billboard, description, target audience, campaign cost and estimated impressions. Brands and businesses could use this to understand/compare geographical options, optimize cost and enrich their business decisions.</p>
+    <p class="module-des-user">Select the desired area from the drop-down list of the billboards available of Datalytix platform. </p>
+    <div class="row">
+      <div class="col-5 ad-details">
+        <form action="{{ url_for('ad_module')}}" method="POST">
+          <label for="adOptions"> Select an area </label>
+          <div class="form-group">
+            <select name="adOption" class="form-control" id="adOptions" required>
+              <option value="" disabled selected hidden>Select here</option>
+              {% for p in ad_opts %}
+                <option value="{{ p }}">{{ p }}</option>
+              {% endfor %}
+            </select>
+            <button class="btn btn-primary custom-btn">Submit</button>
+          </div>    
+        </form>
+        <div>
+          {% if (folium_html) %}
+          {{ folium_html | safe}}
+          {% endif %}
+        </div>
+      </div>
+      {% if (img_path) %}
+      <div class="col-7">
+        <div class="ad-image-container">
+            <img src="../static/ad_images/{{ img_path }}" class="ad-image" alt="Image of the Billboard">
+        </div>
+        <div class="row ad-content">
+          <div class="col-5 ad-content-box">
+            <h5> Billboard Description </h5>
+            <p><strong> Dimension (in ft): </strong> {{ size }} </p>
+            <p><b>Facing from : </b> {{ ff }}</p>
+            <p><b>Facing towards : </b> {{ ft }}</p>  
+            <p><strong>Type:</strong> {{ typ }} </p>        
+          </div> 
+          <div class="col-5 ad-content-box Financials">
+            <h5> Financials </h5>
+            <p><b>Cost per month:</b> ₹ {{ cost }}</p>
+            <p><b>Estimated Impressions per day : </b>{{ t_imp }}</p>
+            <p><b>Cost per Impression : </b> ₹ {{ a_imp }}</p>
+          </div>
+          <!-- <div class="col-4 ad-content-right"> 
+            <p><b>Target Audience: </b>{{ ta }}</p>
+          </div> -->
+        </div>
+        <div class="row ad-content">
+          <div class="ad-content-box target-audi">
+            <h5>Target Audiences</h5>
+            <p>{{ ta }}</p>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>   
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns" crossorigin="anonymous"></script>
+</body>
+</html>

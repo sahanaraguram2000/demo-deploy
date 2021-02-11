@@ -1,0 +1,109 @@
+.full-content{
+    margin: 0.2% 1% auto 1%;
+}
+/* body{
+    background: rgb(11,36,91);
+  background: linear-gradient(90deg, rgba(11,36,91,1) 0%, rgba(154,7,60,1) 72%);
+  } */
+
+body{
+    background-color: rgba(204, 204, 255, 0.1);
+}       
+.page-heading{
+    margin-bottom: 1%;
+}
+.input-area{
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 1%;
+    justify-content: space-between;
+}
+.input-area .form-control{
+    width: 84%;
+}
+
+.general-details{
+    margin: 10px 20px 20px 20px;
+    justify-content: space-between;
+}
+.tab-details{
+    margin-bottom: 7%;
+    font-size: smaller;
+}
+.explore-api{
+    margin-top: 2%;
+    margin-left: 85%;
+}
+.tab-box{
+  border: 1px solid #2196f3;
+  padding: 3% 2% 4% 2%;
+  border-radius: 10px;
+}
+
+.btn-submit{
+    background-color: rgba(0, 105, 217, 0.6);
+}
+.brand-tab{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+.social{
+    margin: 20px 100px 0px 100px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    font-weight: 600;
+
+}
+.social-box{
+    padding: 10px;
+    /* border: 2px solid #0275d8; */
+    box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.1), 0 6px 10px 0 rgba(0, 0, 0, 0.19);
+    border-radius: 5px;
+}
+.social-span{
+    display: block;
+    font-size: 40px;
+    font-weight: 400;
+    text-align: center;
+}
+
+.general-details-box{
+    box-sizing: border-box;
+    padding: 10px;
+    /* border: 2px solid #0275d8; */
+    box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.1), 0 6px 10px 0 rgba(0, 0, 0, 0.19);
+    border-radius: 5px;
+}
+.tab-pane{
+    margin: 0px 30px 0px 30px;
+}
+.heading-info{
+    display: flex;
+    flex-direction: row;
+}
+
+.info{
+    color: #0275d8;
+    margin: 5px auto auto 10px;
+}
+.tooltip > .tooltip-inner {background-color: #0275d8;}
+.bs-tooltip-auto[x-placement^=right] .arrow::before,
+.bs-tooltip-right .arrow::before {
+  border-right-color: #0275d8; /* Red */
+}
+.module-des{
+    color:#9A073C;
+    font-size: 14px;
+    margin-bottom: 0px
+  }
+.module-des-user{
+color:#0B245B;
+font-size: 14px;
+/* margin-bottom: 0px */
+}
+.nav>li>a {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}

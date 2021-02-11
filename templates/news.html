@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="refresh" content="500" >
+    <title>Online news feed</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/news.css') }}">
+    <!-- <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/style.css') }}"> -->
+    <!-- <script src='static/Chart.min.js'></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js" integrity="sha512-d9xgZrVZpmmQlfonhQUvTR7lMPtO7NkZMkA0ABN3PHCbKA5nqylQ/yWlFAyY6hYgdF1Qh6nYiuADWwKB4C2WSw==" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div style="display: flex; flex-direction: row;"> 
+        <img src="../static/datalytix/datalytix.png" alt="datalytix" width="40" height="30" style="margin-left: 0.5%;">
+        <h4 style="margin-left: 1%; color: #9A073C;">DATALYTIX</h4>
+        <!-- <a href="https://us7.list-manage.com/contact-form?u=c45b4435fa81fc45d23ed7254&form_id=6313ebab993ba9105ee068628885d91f" 
+            target="_blank" style="margin:0.2% 1% 0.2% 77%;">
+            
+        </a> -->
+        <div style="margin:0.2% 1% 0.2% 77%;">
+            <button class="btn btn-warning btn-sm" data-toggle="modal" data-target="#exampleModal">Contact Us!</button>
+        </div>
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">Contact Us</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <iframe src="https://us7.list-manage.com/contact-form?u=c45b4435fa81fc45d23ed7254&form_id=6313ebab993ba9105ee068628885d91f" style="width: 100%; min-height: 40rem; border: none;"></iframe>
+                </div>
+              </div>
+            </div>
+        </div>
+    </div>
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link active" href="{{ url_for('show_search') }}">Online visibility</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('show_customer_search') }}">Hyperlocal Intelligence</a>
+        </li>
+        <li>
+            <a class="nav-link" href="{{ url_for('ad_home') }}">OOH Advertising</a>
+        </li>
+        <li>
+            <a class="nav-link" href="{{ url_for('location_home') }}">Footfall & Visits</a>
+        </li>
+    </ul>
+    <div class="full-content">
+    <p class="module-des">Built on top of the largest global database of events, language and tone, this module provides real-time keyword specific news, media mentions & article tones for the last 3 months, publication locations in map view for quick and visual discovery.</p>
+    <p class="module-des-user">Please enter your keyword to access insights, use deep/TV search for filtered and media related AI analysis.</p>    
+        <div class="row">
+            <div class="col-6">
+                <div>
+                    <form method="POST" class="input-area">
+                        <input type="text" name="keyword" placeholder="Search Your keyword Here" class="textInput form-control">
+                        <input type="submit" value="Submit" class="btn btn-primary customBtn">
+                    </form>
+                </div>
+                <h6>{{error_msg}}</h6>  
+                <div class="news_content">
+                    {% if ( keyword ) %}
+                    {% for news in custom_news %}
+                            <a href=" {{ news['url'] }} " target="_blank">
+                                <h6 class="news_title">{{ news["title"] }}</h6>
+                            </a>
+                            {% if (news["dt"]["hours"] > 1) %}
+                            <small class="news_time">{{ news["domain"] }} | {{ news["dt"]["hours"] }} hrs and {{ news["dt"]["minutes"] }} mins ago </small>
+                            {% elif (news["dt"]["hours"] > 0) %}
+                            <small class="news_time">{{ news["domain"] }} | {{ news["dt"]["hours"] }} hr and {{ news["dt"]["minutes"] }} mins ago </small>
+                            {% else %}
+                            <small class="news_time">{{ news["domain"] }} | {{ news["dt"]["minutes"] }} mins ago </small>
+                            {% endif %}
+                    {% endfor %}
+                </div>
+                <section class="sample-image">
+                    <div class="contact">
+                        <a href="https://us7.list-manage.com/contact-form?u=c45b4435fa81fc45d23ed7254&form_id=6313ebab993ba9105ee068628885d91f" target="_blank">
+                            <button class="btn btn-warning contact-us">Contact Us! </button>
+                        </a>
+                        <div class="sub-text">To unlock related topic and other premium features</div>
+                    </div>   
+                </section>
+            </div>
+            <div class="col-6">
+                <div class="news_tv_deep">
+                    <p class="search_term"><span class="font-weight-bold">Search Term : </span> {{ line_title | capitalize }}</p>
+                    <div class="tv_deep_buttons">
+                        <a href="/Content" class="btn btn-outline-primary btn-sm">Deep Search</a>
+                        <a href="/tvexplorer" class="btn btn-outline-primary btn-sm">TV Search</a>
+                    </div>
+                </div>
+                <div class="sentiment-chart">
+                    <div class="chart-1">
+                        <canvas id="myChart" height="85"></canvas>
+                        <small for="myChart"><em> Total number of articles analyzed: {{ total }}</em></small>
+                    </div>
+                    <div class="chart-2">
+                        <canvas id="line-chart" height="85"></canvas>
+                    </div>
+                </div>
+                <small class="geoMap-title">Geographical proximity mentions</small>
+                <iframe src=" {{ geo_url }} " frameborder="0" class="geoMap" title="world map" webkitallowfullscreen mozallowfullscreen allowfullscreen class="geoMap"></iframe>
+                {% endif %}
+            </div>  
+        </div>
+    </div>
+   
+    <script>
+        var line_title = "{{ line_title }}"
+        var labels_bar = [{% for item in labels %}
+                   "{{item}}",
+                  {% endfor %}]
+        var data_bar = [{% for item in values %}
+                      {{item}},
+                    {% endfor %}]
+        var labels_line = [{% for item in line_labels %}
+                        "{{item}}",
+                        {% endfor %}]
+        var data_line =  [{% for item in line_values %}
+                        "{{item}}",
+                        {% endfor %}]
+
+    </script>
+    <script src="{{ url_for('static', filename='javascript/news.js')}}"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns" crossorigin="anonymous"></script>
+</body>
+</html>
